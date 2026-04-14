@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Website - GA4 Tracking POC</title>
+
+    <!-- Google Analytics GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WSWXTC82G8"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-WSWXTC82G8');
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+        nav { display: flex; align-items: center; gap: 8px; }
+        nav a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 15px;
+            transition: background 0.2s, color 0.2s;
+        }
+        nav a:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+        nav a.active {
+            background: #2980b9;
+            color: white;
+        }
+        .hero {
+            background: #2980b9;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .hero h2 { font-size: 36px; margin-bottom: 10px; }
+        .hero p { font-size: 18px; margin-bottom: 30px; }
+        .hero button {
+            background: white;
+            color: #2980b9;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hero button:hover { background: #ecf0f1; }
+        .cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 50px 40px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            width: 250px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .card h3 { color: #2c3e50; }
+        .card p { color: #666; font-size: 14px; }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DemoSite</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Products</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<div class="hero">
+    <h2>Welcome to Our Demo Website</h2>
+    <p>This page is being tracked live by Google Analytics 4</p>
+    <button onclick="gtag('event', 'button_click', {event_category: 'engagement', event_label: 'Get Started'})">
+        Get Started
+    </button>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <h3>Analytics</h3>
+        <p>Track every user interaction in real time with GA4.</p>
+    </div>
+    <div class="card">
+        <h3>Performance</h3>
+        <p>Monitor page load speed and user engagement metrics.</p>
+    </div>
+    <div class="card">
+        <h3>Insights</h3>
+        <p>Get actionable insights from your website traffic data.</p>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 DemoSite — GA4 Tracking POC
+</footer>
+
+</body>
+</html>
