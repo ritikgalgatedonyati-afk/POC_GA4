@@ -12,6 +12,35 @@
         function gtag(){ dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-WSWXTC82G8');
+
+        // Track time spent on page
+        const startTime = Date.now();
+        window.addEventListener('beforeunload', () => {
+            const timeSpent = Math.round((Date.now() - startTime) / 1000);
+            gtag('event', 'time_on_page', {
+                event_category: 'engagement',
+                event_label: 'Time Spent',
+                value: timeSpent
+            });
+        });
+
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        window.addEventListener('scroll', () => {
+            const scrollPercent = Math.round(
+                (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
+            );
+            scrollDepths = scrollDepths.filter(depth => {
+                if (scrollPercent >= depth) {
+                    gtag('event', 'scroll_depth', {
+                        event_category: 'engagement',
+                        event_label: depth + '%'
+                    });
+                    return false;
+                }
+                return true;
+            });
+        });
     </script>
 
     <style>
@@ -60,6 +89,7 @@
         }
         .hero h2 { font-size: 36px; margin-bottom: 10px; }
         .hero p { font-size: 18px; margin-bottom: 30px; }
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
         .hero button {
             background: white;
             color: #2980b9;
@@ -69,8 +99,15 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s;
         }
-        .hero button:hover { background: #ecf0f1; }
+        .hero button.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        .hero button:hover { background: #ecf0f1; color: #2980b9; }
+        .hero button.secondary:hover { background: rgba(255,255,255,0.15); color: white; }
         .cards {
             display: flex;
             justify-content: center;
@@ -85,9 +122,73 @@
             width: 250px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
         }
         .card h3 { color: #2c3e50; }
         .card p { color: #666; font-size: 14px; }
+        .card button {
+            margin-top: 14px;
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .card button:hover { background: #2471a3; }
+
+        /* Contact Form */
+        .form-section {
+            background: white;
+            max-width: 500px;
+            margin: 0 auto 50px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-section h2 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
+        .form-section input, .form-section textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-section button {
+            width: 100%;
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-section button:hover { background: #2471a3; }
+
+        /* Toast notification */
+        #toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2ecc71;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
         footer {
             text-align: center;
             padding: 20px;
@@ -99,42 +200,101 @@
 </head>
 <body>
 
+<!-- Toast -->
+<div id="toast">Event tracked! ✅</div>
+
 <header>
     <h1>DemoSite</h1>
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Products</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
+        <a href="#" class="active" onclick="trackNavClick('Home')">Home</a>
+        <a href="#" onclick="trackNavClick('Products')">Products</a>
+        <a href="#" onclick="trackNavClick('About')">About</a>
+        <a href="#" onclick="trackNavClick('Contact')">Contact</a>
     </nav>
 </header>
 
+<!-- Hero Section -->
 <div class="hero">
     <h2>Welcome to Our Demo Website</h2>
     <p>This page is being tracked live by Google Analytics 4</p>
-    <button onclick="gtag('event', 'button_click', {event_category: 'engagement', event_label: 'Get Started'})">
-        Get Started
-    </button>
+    <div class="hero-buttons">
+        <button onclick="trackEvent('button_click', 'Hero', 'Get Started')">Get Started</button>
+        <button class="secondary" onclick="trackEvent('button_click', 'Hero', 'Learn More')">Learn More</button>
+    </div>
 </div>
 
+<!-- Feature Cards -->
 <div class="cards">
-    <div class="card">
-        <h3>Analytics</h3>
+    <div class="card" onclick="trackEvent('card_click', 'Features', 'Analytics')">
+        <h3>📊 Analytics</h3>
         <p>Track every user interaction in real time with GA4.</p>
+        <button onclick="event.stopPropagation(); trackEvent('button_click', 'Card', 'Analytics - Explore')">Explore</button>
     </div>
-    <div class="card">
-        <h3>Performance</h3>
+    <div class="card" onclick="trackEvent('card_click', 'Features', 'Performance')">
+        <h3>⚡ Performance</h3>
         <p>Monitor page load speed and user engagement metrics.</p>
+        <button onclick="event.stopPropagation(); trackEvent('button_click', 'Card', 'Performance - Explore')">Explore</button>
     </div>
-    <div class="card">
-        <h3>Insights</h3>
+    <div class="card" onclick="trackEvent('card_click', 'Features', 'Insights')">
+        <h3>💡 Insights</h3>
         <p>Get actionable insights from your website traffic data.</p>
+        <button onclick="event.stopPropagation(); trackEvent('button_click', 'Card', 'Insights - Explore')">Explore</button>
     </div>
+</div>
+
+<!-- Contact Form -->
+<div class="form-section">
+    <h2>Contact Us</h2>
+    <input type="text" id="nameInput" placeholder="Your Name" onfocus="trackEvent('form_interaction', 'Contact Form', 'Name Field Focus')" />
+    <input type="email" id="emailInput" placeholder="Your Email" onfocus="trackEvent('form_interaction', 'Contact Form', 'Email Field Focus')" />
+    <textarea rows="4" placeholder="Your Message" onfocus="trackEvent('form_interaction', 'Contact Form', 'Message Field Focus')"></textarea>
+    <button onclick="trackFormSubmit()">Send Message</button>
 </div>
 
 <footer>
     &copy; 2026 DemoSite — GA4 Tracking POC
 </footer>
+
+<script>
+    // Generic event tracker with toast
+    function trackEvent(eventName, category, label) {
+        gtag('event', eventName, {
+            event_category: category,
+            event_label: label
+        });
+        showToast(`Tracked: ${label}`);
+    }
+
+    // Nav click tracker
+    function trackNavClick(page) {
+        gtag('event', 'nav_click', {
+            event_category: 'Navigation',
+            event_label: page
+        });
+        showToast(`Nav: ${page}`);
+    }
+
+    // Form submit tracker
+    function trackFormSubmit() {
+        const name  = document.getElementById('nameInput').value;
+        const email = document.getElementById('emailInput').value;
+        gtag('event', 'form_submit', {
+            event_category: 'Contact Form',
+            event_label: 'Form Submitted',
+            user_name: name || 'Anonymous',
+            has_email: email ? 'yes' : 'no'
+        });
+        showToast('Form Submit Tracked! ✅');
+    }
+
+    // Toast notification
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = `Event tracked: ${msg} ✅`;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+</script>
 
 </body>
 </html>
